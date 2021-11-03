@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %} Register System {% endblock %}
+
+{% block content %}
+
+{% if message  %}
+    <div class="alert alert-secondary" role="alert">
+        <p>{{ message }}</p>
+    </div>
+{% endif %}
+
+<h3> Tell me something about your music interests </h3>
+
+<br> <br> <br>
+
+<form action="/register/preferences" method="post">
+    <div class="form-group">
+        <label for="InputCountry">Country</label>
+        <input name="country" class="form-control" id="InputCountry" placeholder="Country">
+    </div>
+    <div class="form-group">
+        <label for="InputGenre">Genre</label>
+        <input name="genre" class="form-control" id="InputGenre"  placeholder="Genre">
+    </div>
+    <div class="form-group">
+        <label for="InputAge">Age</label>
+        <input name="age" class="form-control" id="InputAge" placeholder="Age">
+    </div>
+    <div class="form-group">
+        <label for="InputLocation">Location</label>
+        <input name="location" class="form-control" id="InputLocation"  placeholder="Location">
+    </div>
+    <div class="form-group">
+        <label for="InputArtist">Favorite Artist</label>
+        <input name="artist" class="form-control" id="InputArtist" placeholder="Artist">
+    </div>
+
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <button type="submit" class="btn btn-lg btn-success ">Save</button>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
