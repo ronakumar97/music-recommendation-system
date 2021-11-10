@@ -97,13 +97,13 @@ def get_bearer_token():
 
     headers = {"Authorization": "Basic MjlkOTFkYWU4NGFkNGVkOGI5M2E4MzRiMGNkZDA5YjQ6OTAwNGNmM2E0YzZkNDVmYmE5OGQ0MTM4ZDk5ZDE4NjE=",
                "Content-Type" : "application/x-www-form-urlencoded"}
+
     r = requests.post(token_url, params=params, headers=headers)
     token = r.json()['access_token']
     return token
 
 @app.route("/store_features", methods=["GET", "POST"])
 def store_features():
-    print("i am here")
     if (request.method == "POST"):
         webbrowser.open(request.form.get('preview_url'))
 
@@ -112,8 +112,7 @@ def store_features():
         r = requests.get(feature_url, headers=headers)
         processing.save_features(r.json())
 
-    #return render_template('logged_in.html')
-
+    return '<h1> Playing Song..... </h1>'
 
 if __name__ == "__main__":
     app.run(debug=True)
