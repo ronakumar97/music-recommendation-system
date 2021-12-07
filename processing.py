@@ -1,6 +1,9 @@
 from flask import render_template, url_for, redirect, session
 import pymongo
 import bcrypt
+from modelling import models
+from app import get_bearer_token
+import requests
 
 client = pymongo.MongoClient()
 
@@ -10,7 +13,6 @@ user_records = db.users
 user_preferences = db.preferences
 user_history = db.history
 user_features = db.features
-user_recommendations = db.recommendations #TODO;
 
 def fetch_songs(items):
     songs = []
@@ -133,5 +135,42 @@ def save_features(feaures):
         'time_signature': feaures['time_signature']
     }
     user_features.insert_one(user_features_input)
+
+def get_songs():
+    user_found = user_records.find_one({"email": session['email']})
+    user_id = user_found['_id']
+
+    recommendations_data = models.read_dataset(user_id)
+    song_names = recommendations_data['Song Names']
+    song_ids = recommendations_data['Song Ids']
+
+    recommendations = []
+
+    for song_id in range(len(song_ids)):
+        search_url = 'https://api.spotify.com/v1/tracks/' + song_ids[song_id]
+
+        params = {
+            'type': 'track',
+            'market': 'US'
+        }
+
+        headers = {"Authorization": "Bearer " + get_bearer_token()}
+
+        r = requests.get(search_url, params=params, headers=headers)
+        items = r.json()
+
+        preview_url = items['preview_url']
+        image = items['album']['images'][0]['url']
+
+        recommendation = {
+            'song_name': song_names[song_id],
+            'song_id': song_ids[song_id],
+            'preview_url': preview_url,
+            'image': image
+        }
+
+        recommendations.append(recommendation)
+
+    return render_template('discover.html', songs = recommendations)
 
 

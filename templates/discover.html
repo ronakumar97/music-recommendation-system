@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %} You are logged in {% endblock %}
+
+{% block content %}
+
+<h2> Discover New Songs </h2>
+
+{% if songs %}
+      <div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row">
+            {% for song in songs %}
+
+            <div class="col-md-4">
+              <div class="card mb-4 shadow-sm">
+                <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ song.image }}" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"></img>
+                <div class="card-body">
+                  <p class="card    -text">{{ song.song_name }}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <form action="/store_features" method="POST">
+            <div class="form-group">
+
+                <input type="hidden" value={{ song.song_id }} name="song_id" class="form-control">
+                <input type="hidden" value={{ song.preview_url }} name="preview_url" class="form-control">
+    </div>
+                      <button type="submit" class="btn btn-sm btn-outline-secondary">Play</button>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+</form>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+{% endif %}
+
+{% endblock %}
+
+

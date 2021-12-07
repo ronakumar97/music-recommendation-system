@@ -14,9 +14,6 @@ db = client.get_database('music_project')
 user_records = db.users
 user_preferences = db.preferences
 user_history = db.history
-user_recommendations = db.recommendations #TODO;
-
-BEARER_TOKEN = 'BQA3WmdMYiuZl8qs6VJnxuiP4p-8wq2Y_WeSYmwQxR0O8wCLrOrjppDwC93woGJCwGgJuGUiI9L9j2gd_N4'
 
 @app.route("/", methods=['GET', 'POST'])
 def login():
@@ -89,18 +86,9 @@ def search_music():
 
     return render_template('logged_in.html', songs = songs)
 
-def get_bearer_token():
-    token_url = 'https://accounts.spotify.com/api/token'
-    params = {
-        'grant_type': 'client_credentials'
-    }
-
-    headers = {"Authorization": "Basic MjlkOTFkYWU4NGFkNGVkOGI5M2E4MzRiMGNkZDA5YjQ6OTAwNGNmM2E0YzZkNDVmYmE5OGQ0MTM4ZDk5ZDE4NjE=",
-               "Content-Type" : "application/x-www-form-urlencoded"}
-
-    r = requests.post(token_url, params=params, headers=headers)
-    token = r.json()['access_token']
-    return token
+@app.route("/discover", methods=['GET', 'POST'])
+def discover():
+    return processing.get_songs()
 
 @app.route("/store_features", methods=["GET", "POST"])
 def store_features():
@@ -113,6 +101,19 @@ def store_features():
         processing.save_features(r.json())
 
     return '<h1> Playing Song..... </h1>'
+
+def get_bearer_token():
+    token_url = 'https://accounts.spotify.com/api/token'
+    params = {
+        'grant_type': 'client_credentials'
+    }
+
+    headers = {"Authorization": "Basic MjlkOTFkYWU4NGFkNGVkOGI5M2E4MzRiMGNkZDA5YjQ6OTAwNGNmM2E0YzZkNDVmYmE5OGQ0MTM4ZDk5ZDE4NjE=",
+               "Content-Type" : "application/x-www-form-urlencoded"}
+
+    r = requests.post(token_url, params=params, headers=headers)
+    token = r.json()['access_token']
+    return token
 
 if __name__ == "__main__":
     app.run(debug=True)
