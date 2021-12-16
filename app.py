@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, url_for, redirect, session
 import pymongo
 import requests
 from datetime import datetime
+
+import modelling.models
 import processing
 import webbrowser
 
@@ -74,7 +76,7 @@ def search_music():
             'q': song_name,
             'type': 'track',
             'limit': 9,
-            'market': 'US'
+            'market': 'US',
         }
 
         headers = {"Authorization": "Bearer " + get_bearer_token()}
@@ -90,6 +92,10 @@ def search_music():
 def discover():
     return processing.get_songs()
 
+@app.route('/history', methods=['GET'])
+def history():
+    return processing.get_history()
+
 @app.route("/store_features", methods=["GET", "POST"])
 def store_features():
     if (request.method == "POST"):
@@ -101,6 +107,28 @@ def store_features():
         processing.save_features(r.json())
 
     return '<h1> Playing Song..... </h1>'
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
+
+@app.route('/admin/analyze', methods=['GET'])
+def analyze():
+    if('email' in session and session['email'] == 'admin@musicforyou.com'):
+        return modelling.models.analyze()
+    return '<h1> Access denied... </h1>'
+
+@app.route('/admin/visualize', methods=['GET'])
+def visualize():
+    if('email' in session and session['email'] == 'admin@musicforyou.com'):
+        return modelling.models.visualize()
+    return '<h1> Access denied... </h1>'
+
+@app.route('/admin/NMF', methods=['GET'])
+def NMF():
+    if('email' in session and session['email'] == 'admin@musicforyou.com'):
+        return modelling.models.NMF()
+    return '<h1> Access denied... </h1>'
 
 def get_bearer_token():
     token_url = 'https://accounts.spotify.com/api/token'

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %} You are logged in {% endblock %}
+
+{% block content %}
+
+<h2> Song History </h2>
+
+<br> <br> <br>
+
+{% if songs %}
+    {% for song in songs %}
+        <ul class="list-group">
+          <li class="list-group-item">{{song.song_name}}</li>
+        </ul>
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
+

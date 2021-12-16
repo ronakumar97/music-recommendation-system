@@ -4,6 +4,7 @@ import bcrypt
 from modelling import models
 from app import get_bearer_token
 import requests
+from bson.objectid import ObjectId
 
 client = pymongo.MongoClient()
 
@@ -106,10 +107,11 @@ def save_preferences(request):
     age = request.form.get('age')
     location = request.form.get('location')
     artist = request.form.get('artist')
+    allow_explicit = request.form.get('explicit')
 
     user_found = user_records.find_one({"email": session['email']})
     user_id = user_found['_id']
-    user_preferences_input = {'_id': user_id, 'country': country, 'genre': genre, 'age': age, 'location': location, 'artist': artist}
+    user_preferences_input = {'_id': user_id, 'country': country, 'genre': genre, 'age': age, 'location': location, 'artist': artist, 'allow_explicit': allow_explicit}
     user_preferences.insert_one(user_preferences_input)
 
 def save_features(feaures):
@@ -172,5 +174,27 @@ def get_songs():
         recommendations.append(recommendation)
 
     return render_template('discover.html', songs = recommendations)
+
+def get_history():
+    user_found = user_records.find_one({"email": session['email']})
+    user_id = user_found['_id']
+
+    last_songs_fetched = user_history.find({"user_id": ObjectId(user_id)}).sort("_id", pymongo.DESCENDING)
+
+    last_songs = []
+
+    for song in last_songs_fetched:
+        last_song = {
+            'song_name': song['last_song_played']
+        }
+
+        last_songs.append(last_song)
+
+    return render_template('history.html', songs = last_songs)
+
+
+
+
+
 
 
